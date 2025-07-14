@@ -54,7 +54,7 @@ describe('automationexercise registration', () => {
  //14. Verify that 'ACCOUNT CREATED!' is visible
  
  //cy.contains('ACCOUNT CREATED!').should('be.visible')
-
+//
 
  //15. Click 'Continue' button
  //cy.get('[data-qa="continue-button"]').click()
