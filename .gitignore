@@ -15,3 +15,7 @@
 *.app
 #Rapid Application Development File
 rad.json
+
+
+
+node_modules
