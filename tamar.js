@@ -40,7 +40,7 @@ console.log(bonus)
 a=23
 b=a/2
 c=a+b
-console.log(c)
+console.log(c);
 
 
 
