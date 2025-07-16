@@ -1,95 +1,74 @@
-describe('automationexercise registration', () => {
-  it('registration with correct data', () => {
-    cy.visit('https://www.automationexercise.com/login')
-    cy.get('.signup-form > h2').should("have.text","New User Signup!")
-    cy.get('[data-qa="signup-name"]').type("testUser")
-    cy.get('[data-qa="signup-email"]').type("tako123456@gmail.com")
-    cy.get('[data-qa="signup-button"]').click()
-    cy.get('#id_gender1').click()
-    cy.get('[data-qa="days"]').select(6)
-    cy.get('[data-qa="months"]').select("May")
-    cy.get('[data-qa="years"]').select(1)
-    cy.contains("name")
-describe('automationexercise registration', () => {
-  it('register with correct data', () => {
+// cypress/e2e/accountTests.cy.js
 
+/// <reference types="cypress" />
 
+describe('Simple Tests', () => {
 
-  //1. Launch browser
- //2. Navigate to url 'http://automationexercise.com'
-  cy.visit('https://www.automationexercise.com/login')
- //3. Verify that home page is visible successfully
- cy.contains('Home').should('be.visible')
+  const userInfo = {
+    mail: 'cypress.user2025@mail.com',
+    pass: 'TestUser@2025',
+    newPass: 'NewPass456!',
+    firstName: 'Tako',
+    lastName: 'Chaladze',
+    telephone: '599123456',
+    address1: 'Rustaveli Ave 10',
+    city: 'Tbilisi',
+    zip: '0101',
+    state: 'Tbilisi',
+    country: 'Georgia'
+  }
 
- //4. Click on 'Signup / Login' button
-  cy.get('[data-qa="signup-button"]').click()
- //5. Verify 'New User Signup!' is visible
- cy.get('.signup-form > h2').should("have.text","New User Signup!")
- //6. Enter name and email address
-  cy.get('[data-qa="signup-name"]').type("tako122")
-  cy.get('[data-qa="signup-email"]').type("tako122@gmail.com")
- //7. Click 'Signup' button
- cy.get('[data-qa="signup-button"]').click()
- //8. Verify that 'Enter Account Information' is visible
- //cy.get(':nth-child(1) > b').should("have.text"," Enter Account Information")
- 
- 
-  //9. Fill details: Title, Name, Email, Password, Date of birth
-  cy.get('.clearfix > :nth-child(1)').click()
-  cy.get('[data-qa="name"]').type("tako122")
-  cy.get('[data-qa="email"]')
-  cy.get('[data-qa="password"]').type("password")
-
- //10. Select checkbox 'Sign up for our newsletter!'
- cy.get(':nth-child(7) > label')
- cy.get('input[name="newsletter"]').check()
-
- //11. Select checkbox 'Receive special offers from our partners!'
- cy.get(':nth-child(8) > label')
- cy.get('input[name="optin"]').check()
-
- //12. Fill details: First name, Last name, Company, Address, Address2, Country, State, City, Zipcode, Mobile Number
- cy.get('[data-qa="first_name"]').type("tako122")
- cy.get('[data-qa="last_name"]').type("chaladze")
- cy.get('[data-qa="company"]').type("tests")
- cy.get('[data-qa="address"]').type("address 1")
- cy.get('[data-qa="address2"]').type("address 12")
- cy.get('[data-qa="country"]').select("United States")
- cy.get('[data-qa="state"]').type("virginia")
- cy.get('[data-qa="city"]').type("washington")
- cy.get('[data-qa="zipcode"]').type("123456")
- cy.get('[data-qa="mobile_number"]').type("12345678")
- //13. Click 'Create Account button'
- cy.get('[data-qa="create-account"]').click()
- 
- 
- //14. Verify that 'ACCOUNT CREATED!' is visible
- 
- //cy.contains('ACCOUNT CREATED!').should('be.visible')
-//
-
- //15. Click 'Continue' button
- //cy.get('[data-qa="continue-button"]').click()
-
- //16. Verify that 'Logged in as username' is visible
- //17. Click 'Delete Account' button
- //18. Verify that 'ACCOUNT DELETED!' is visible and click 'Continue' button
-
-
-
- 
-    //cy.get('#id_gender1').click()
-    //cy.get('[data-qa="days"]').select(6)
-    //cy.get('[data-qa="months"]').select("May")
-    //cy.get('[data-qa="years"]').select(1)
-
-    //cy.contains("Name")
-
-
-
-
+  beforeEach(() => {
+    cy.authUser(userInfo.mail, userInfo.pass)
   })
-})
 
+  it('Updates user personal information', () => {
+    cy.visit('/index.php?rt=account/account')
+    cy.contains('Edit account details').click()
+
+    cy.get('input[name="firstname"]').clear().type('Tamar')
+    cy.get('input[name="lastname"]').clear().type('Updated')
+    cy.get('input[name="telephone"]').clear().type('555000111')
+    cy.get('button[title="Continue"]').click()
+
+    cy.contains('Success: Your account has been successfully updated.').should('be.visible')
+  })
+
+  it('Changes password and reverts back', () => {
+    cy.visit('/index.php?rt=account/account')
+    cy.contains('Change password').click()
+
+    cy.get('input[name="password"]').type(userInfo.pass)
+    cy.get('input[name="new"]').type(userInfo.newPass)
+    cy.get('input[name="confirm"]').type(userInfo.newPass)
+    cy.get('button[title="Continue"]').click()
+
+    cy.contains('Success: Your password has been successfully updated.').should('be.visible')
+
+    // Revert to original password
+    cy.visit('/index.php?rt=account/login')
+    cy.authUser(userInfo.mail, userInfo.newPass)
+    cy.visit('/index.php?rt=account/account')
+    cy.contains('Change password').click()
+    cy.get('input[name="password"]').type(userInfo.newPass)
+    cy.get('input[name="new"]').type(userInfo.pass)
+    cy.get('input[name="confirm"]').type(userInfo.pass)
+    cy.get('button[title="Continue"]').click()
+  })
+
+  it('Adds new shipping address', () => {
+    cy.visit('/index.php?rt=account/address')
+    cy.contains('New Address').click()
+
+    cy.get('input[name="firstname"]').type(userInfo.firstName)
+    cy.get('input[name="lastname"]').type(userInfo.lastName)
+    cy.get('input[name="address_1"]').type(userInfo.address1)
+    cy.get('input[name="city"]').type(userInfo.city)
+    cy.get('input[name="postcode"]').type(userInfo.zip)
+    cy.get('select[name="country_id"]').select(userInfo.country)
+    cy.get('input[name="zone"]').type(userInfo.state)
+
+    cy.get('button[title="Continue"]').click()
+    cy.contains('Success: Your address has been successfully added').should('be.visible')
   })
 })
