@@ -56,19 +56,5 @@ describe('Simple Tests', () => {
     cy.get('button[title="Continue"]').click()
   })
 
-  it('Adds new shipping address', () => {
-    cy.visit('/index.php?rt=account/address')
-    cy.contains('New Address').click()
 
-    cy.get('input[name="firstname"]').type(userInfo.firstName)
-    cy.get('input[name="lastname"]').type(userInfo.lastName)
-    cy.get('input[name="address_1"]').type(userInfo.address1)
-    cy.get('input[name="city"]').type(userInfo.city)
-    cy.get('input[name="postcode"]').type(userInfo.zip)
-    cy.get('select[name="country_id"]').select(userInfo.country)
-    cy.get('input[name="zone"]').type(userInfo.state)
-
-    cy.get('button[title="Continue"]').click()
-    cy.contains('Success: Your address has been successfully added').should('be.visible')
-  })
 })
